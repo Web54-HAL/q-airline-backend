@@ -9,4 +9,11 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
+
+  @Get("/flights")
+  async getFlightsTable() {
+    const { data, error } = await this.appService.getFlightsTable();
+    return data ;
+  };
+
 }
