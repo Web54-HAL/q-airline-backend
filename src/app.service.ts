@@ -16,7 +16,6 @@ export class AppService {
   }
 
   getFlightsTable = () => {
-    return this.supabaseClient.from("flights").select();;
+    return this.supabaseClient.from('flights').select();
   };
-
 }

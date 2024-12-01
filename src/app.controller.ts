@@ -1,5 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
+import { PublicEndpoint } from './decorators/PublicEndpoint';
 
 @Controller()
 export class AppController {
@@ -10,6 +11,7 @@ export class AppController {
     return this.appService.getHello();
   }
 
+  @PublicEndpoint()
   @Get("/flights")
   async getFlightsTable() {
     const { data, error } = await this.appService.getFlightsTable();
