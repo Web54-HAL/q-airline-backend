@@ -8,8 +8,4 @@ export class AppService {
   getHello(): string {
     return 'Hello World!';
   }
-
-  getFlightsTable = () => {
-    return this.supabaseService.supabaseClient.from('flights').select();
-  };
 }
