@@ -5,11 +5,12 @@ import { SupabaseService } from 'src/supabase/supabase.service';
 
 @Injectable()
 export class UsersService {
-  private readonly supabaseService: SupabaseService;
   private readonly adminsTableName = 'admins';
   private readonly customersTableName = 'customers';
   private readonly emailColumnName = 'email';
   private readonly phoneNumColumnName = 'phone_num';
+
+  constructor(private readonly supabaseService: SupabaseService) {}
 
   async findUserByEmail(email: string): Promise<User | undefined> {
     let user: User = await this.getUser(
