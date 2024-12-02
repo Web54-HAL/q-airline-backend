@@ -1,21 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { User } from './User';
 import { UserRole } from './UserRole';
+import { SupabaseService } from 'src/supabase/supabase.service';
 
 @Injectable()
 export class UsersService {
-  private supabaseClient: SupabaseClient;
+  private readonly supabaseService: SupabaseService;
   private readonly adminsTableName = 'admins';
   private readonly customersTableName = 'customers';
   private readonly emailColumnName = 'email';
   private readonly phoneNumColumnName = 'phone_num';
-
-  constructor() {
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_JWT_SECRET;
-    this.supabaseClient = createClient(supabaseUrl, supabaseKey);
-  }
 
   async findUserByEmail(email: string): Promise<User | undefined> {
     let user: User = await this.getUser(
@@ -63,7 +57,7 @@ export class UsersService {
     columnValue: string,
     userRole: UserRole,
   ) {
-    const { data } = await this.supabaseClient
+    const { data } = await this.supabaseService.supabaseClient
       .from(tableName)
       .select()
       .eq(columnName, columnValue);
