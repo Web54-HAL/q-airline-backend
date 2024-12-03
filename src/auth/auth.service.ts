@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import { SignInDto } from './dto/sign-in.dto';
 import { UserRole } from 'src/enums/UserRole';
+import { SignedInUserDto } from './dto/signed-in-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -37,7 +38,10 @@ export class AuthService {
       throw new UnauthorizedException('Wrong password');
     }
 
-    const payload = { id: user.id, role: UserRole[user.role] };
+    const payload: SignedInUserDto = {
+      userId: user.id,
+      role: UserRole[user.role],
+    };
 
     return {
       access_token: await this.jwtService.signAsync(payload),

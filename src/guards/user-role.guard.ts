@@ -5,13 +5,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import {
+  SignedInUserDto,
+  signedInUserPayloadKey,
+} from 'src/auth/dto/signed-in-user.dto';
 import { ROLE_KEY } from 'src/decorators/EndpointUserRole';
 import { UserRole } from 'src/enums/UserRole';
-
-export class TokenDto {
-  id: number;
-  role: string;
-}
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -24,7 +23,7 @@ export class RoleGuard implements CanActivate {
     );
 
     const request = context.switchToHttp().getRequest();
-    const token = request['user'] as TokenDto;
+    const token: SignedInUserDto = request[signedInUserPayloadKey];
 
     for (const role of requiredRoles) {
       const result = UserRole[role] === token.role;

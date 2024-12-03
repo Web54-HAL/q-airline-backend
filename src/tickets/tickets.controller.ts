@@ -16,6 +16,10 @@ import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { EndpointUserRole } from 'src/decorators/EndpointUserRole';
 import { UserRole } from 'src/enums/UserRole';
 import { RoleGuard } from 'src/guards/user-role.guard';
+import {
+  SignedInUserDto,
+  signedInUserPayloadKey,
+} from 'src/auth/dto/signed-in-user.dto';
 
 @Controller('tickets')
 export class TicketsController {
@@ -46,8 +50,8 @@ export class TicketsController {
   @UseGuards(RoleGuard)
   @Get('booked')
   async getAllBooked(@Request() request) {
-    const { id } = request['user'];
-    return await this.ticketsService.getAllBooked(id);
+    const signedInUserDto: SignedInUserDto = request[signedInUserPayloadKey];
+    return await this.ticketsService.getAllBooked(signedInUserDto.userId);
   }
 
   @EndpointUserRole(UserRole.Admin)
@@ -81,7 +85,10 @@ export class TicketsController {
     @Request() request,
     @Param('ticketId', ParseIntPipe) ticketId: number,
   ) {
-    const { id } = request['user'];
-    return await this.ticketsService.cancelTicket(id, ticketId);
+    const signedInUserDto: SignedInUserDto = request[signedInUserPayloadKey];
+    return await this.ticketsService.cancelTicket(
+      signedInUserDto.userId,
+      ticketId,
+    );
   }
 }
