@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { UserRole } from 'src/users/UserRole';
+import { UserRole } from 'src/enums/UserRole';
 
 @Injectable()
 export class AdminGuard implements CanActivate {

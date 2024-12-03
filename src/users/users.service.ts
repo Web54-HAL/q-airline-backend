@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './User';
-import { UserRole } from './UserRole';
 import { SupabaseService } from 'src/supabase/supabase.service';
+import { UserRole } from 'src/enums/UserRole';
 
 @Injectable()
 export class UsersService {

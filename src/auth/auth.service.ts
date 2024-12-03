@@ -6,7 +6,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import { SignInDto } from './dto/sign-in.dto';
-import { UserRole } from 'src/users/UserRole';
+import { UserRole } from 'src/enums/UserRole';
 
 @Injectable()
 export class AuthService {
