@@ -6,6 +6,7 @@ import {
 import { CreateFlightDto } from './dto/create-flight.dto';
 import { UpdateFlightDto } from './dto/update-flight.dto';
 import { SupabaseService } from 'src/supabase/supabase.service';
+import { FindFlightDto } from './dto/find_flight.dto';
 
 @Injectable()
 export class FlightsService {
@@ -23,10 +24,33 @@ export class FlightsService {
     return data;
   }
 
-  async findAll() {
+  async getAll() {
     const { data } = await this.supabaseService.supabaseClient
       .from(this.flightTableName)
       .select();
+
+    return data;
+  }
+
+  async findAll(findFlightDto: FindFlightDto) {
+    const {
+      flight_type,
+      start_pos,
+      end_pos,
+      start_date,
+      end_date,
+      passenger_seat_count,
+    } = findFlightDto;
+
+    const { data, error } = await this.supabaseService.supabaseClient
+      .from('available_seats_view')
+      .select()
+      .match({ flight_type, start_pos, end_pos, start_date, end_date })
+      .gte('available_seats', passenger_seat_count);
+
+    if (error) throw new BadRequestException(error);
+    if (data.length === 0)
+      throw new NotFoundException('Find none flight with input data');
 
     return data;
   }
