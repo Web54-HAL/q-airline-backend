@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -8,12 +9,17 @@ import { UsersService } from 'src/users/users.service';
 import { SignInDto } from './dto/sign-in.dto';
 import { UserRole } from 'src/enums/UserRole';
 import { SignedInUserDto } from './dto/signed-in-user.dto';
+import { CustomerRegisterDto } from './dto/customer-register.dto';
+import { SupabaseService } from 'src/supabase/supabase.service';
 
 @Injectable()
 export class AuthService {
+  private readonly customerTableName = 'customers';
+
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private readonly supabaseService: SupabaseService,
   ) {}
 
   async signIn(signInDto: SignInDto): Promise<{ access_token: string }> {
@@ -48,6 +54,22 @@ export class AuthService {
     };
   }
 
+  async customerSignUp(customerRegisterDto: CustomerRegisterDto) {
+    await this.checkingCustomerExisted(
+      customerRegisterDto.email,
+      customerRegisterDto.phone_num,
+    );
+
+    const { data, error } = await this.supabaseService.supabaseClient
+      .from(this.customerTableName)
+      .insert(customerRegisterDto)
+      .select();
+
+    if (error) throw new BadRequestException(error);
+
+    return data;
+  }
+
   private isEmail(inputEmail: string): boolean {
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
     return emailRegex.test(inputEmail);
@@ -58,5 +80,32 @@ export class AuthService {
     const phoneNumRegex =
       /(?:\+?84|0084|0)[235789][0-9]{1,2}[0-9]{7}(?:[^\d]+|$)/;
     return phoneNumRegex.test(inputPhoneNum);
+  }
+
+  private async checkingCustomerExisted(
+    inputEmail: string,
+    inputPhoneNum: string,
+  ): Promise<void> {
+    let data: any;
+
+    ({ data } = await this.supabaseService.supabaseClient
+      .from(this.customerTableName)
+      .select()
+      .eq('email', inputEmail));
+
+    if (data.length !== 0)
+      throw new BadRequestException(
+        'An account already registered with this email',
+      );
+
+    ({ data } = await this.supabaseService.supabaseClient
+      .from(this.customerTableName)
+      .select()
+      .eq('phone_num', inputPhoneNum));
+
+    if (data.length !== 0)
+      throw new BadRequestException(
+        'An account already registered with this phone number',
+      );
   }
 }

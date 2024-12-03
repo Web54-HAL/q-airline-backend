@@ -11,6 +11,7 @@ import {
 import { AuthService } from './auth.service';
 import { PublicEndpoint } from 'src/decorators/PublicEndpoint';
 import { SignInDto } from './dto/sign-in.dto';
+import { CustomerRegisterDto } from './dto/customer-register.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -21,6 +22,14 @@ export class AuthController {
   @Post('login')
   signIn(@Body(ValidationPipe) signInDto: SignInDto) {
     return this.authService.signIn(signInDto);
+  }
+
+  @PublicEndpoint()
+  @Post('register')
+  async customerRegister(
+    @Body(ValidationPipe) customerRegisterDto: CustomerRegisterDto,
+  ) {
+    return await this.authService.customerSignUp(customerRegisterDto);
   }
 
   @Get('profile')

@@ -5,6 +5,7 @@ import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { SupabaseModule } from 'src/supabase/supabase.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AuthGuard } from 'src/guards/auth.guard';
         signOptions: { expiresIn: '120s' },
       }),
     }),
+    SupabaseModule,
   ],
   controllers: [AuthController],
   providers: [
