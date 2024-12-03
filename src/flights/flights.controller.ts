@@ -14,7 +14,9 @@ import { CreateFlightDto } from './dto/create-flight.dto';
 import { UpdateFlightDto } from './dto/update-flight.dto';
 import { PublicEndpoint } from 'src/decorators/PublicEndpoint';
 import { FindFlightDto } from './dto/find_flight.dto';
-import { AdminGuard } from 'src/auth/admin.guard';
+import { RoleGuard } from 'src/guards/user-role.guard';
+import { EndpointUserRole } from 'src/decorators/EndpointUserRole';
+import { UserRole } from 'src/enums/UserRole';
 
 @Controller('flights')
 export class FlightsController {
@@ -26,7 +28,8 @@ export class FlightsController {
     return await this.flightsService.create(createFlightDto);
   }
 
-  @UseGuards(AdminGuard)
+  @EndpointUserRole(UserRole.Admin)
+  @UseGuards(RoleGuard)
   @Get()
   async getAll() {
     return await this.flightsService.getAll();
