@@ -7,12 +7,14 @@ import {
   Param,
   Delete,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { FlightsService } from './flights.service';
 import { CreateFlightDto } from './dto/create-flight.dto';
 import { UpdateFlightDto } from './dto/update-flight.dto';
 import { PublicEndpoint } from 'src/decorators/PublicEndpoint';
 import { FindFlightDto } from './dto/find_flight.dto';
+import { AdminGuard } from 'src/auth/admin.guard';
 
 @Controller('flights')
 export class FlightsController {
@@ -24,7 +26,7 @@ export class FlightsController {
     return await this.flightsService.create(createFlightDto);
   }
 
-  @PublicEndpoint()
+  @UseGuards(AdminGuard)
   @Get()
   async getAll() {
     return await this.flightsService.getAll();
