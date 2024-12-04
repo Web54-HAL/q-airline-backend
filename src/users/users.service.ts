@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { User } from './User';
 import { SupabaseService } from 'src/supabase/supabase.service';
 import { UserRole } from 'src/enums/UserRole';
@@ -93,5 +93,43 @@ export class UsersService {
     };
 
     return user;
+  }
+
+  public async checkingCustomerExistedInDatabase(
+    inputEmail: string,
+    inputPhoneNum: string,
+  ): Promise<void> {
+    let data: any;
+
+    ({ data } = await this.supabaseService.supabaseClient
+      .from(this.customersTableName)
+      .select()
+      .eq('email', inputEmail));
+
+    if (data.length !== 0)
+      throw new BadRequestException(
+        'An account already registered with this email',
+      );
+
+    ({ data } = await this.supabaseService.supabaseClient
+      .from(this.customersTableName)
+      .select()
+      .eq('phone_num', inputPhoneNum));
+
+    if (data.length !== 0)
+      throw new BadRequestException(
+        'An account already registered with this phone number',
+      );
+  }
+
+  public async insertNewCustomerIntoDatabase(customerRegisterDto: any) {
+    const { data, error } = await this.supabaseService.supabaseClient
+      .from(this.customersTableName)
+      .insert(customerRegisterDto)
+      .select();
+
+    if (error) throw new BadRequestException(error);
+
+    return data;
   }
 }
