@@ -11,16 +11,20 @@ import { UserRole } from 'src/enums/UserRole';
 import { SignedInUserDto } from './dto/signed-in-user.dto';
 import { CustomerRegisterDto } from './dto/customer-register.dto';
 import { SupabaseService } from 'src/supabase/supabase.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
   private readonly customerTableName = 'customers';
+  private readonly saltRounds: number;
 
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
     private readonly supabaseService: SupabaseService,
-  ) {}
+  ) {
+    this.saltRounds = +process.env.BCRYPT_SALT_ROUNDS;
+  }
 
   async signIn(signInDto: SignInDto): Promise<{ access_token: string }> {
     const { username, password } = signInDto;
@@ -40,7 +44,8 @@ export class AuthService {
       throw new NotFoundException('User not found');
     }
 
-    if (user.password !== password) {
+    const passwordMatched = await bcrypt.compare(password, user.password);
+    if (!passwordMatched) {
       throw new UnauthorizedException('Wrong password');
     }
 
@@ -60,12 +65,21 @@ export class AuthService {
       customerRegisterDto.phone_num,
     );
 
+    const hashedPassword = await bcrypt.hash(
+      customerRegisterDto.password,
+      this.saltRounds,
+    );
+    customerRegisterDto.password = hashedPassword;
+
     const { data, error } = await this.supabaseService.supabaseClient
       .from(this.customerTableName)
       .insert(customerRegisterDto)
       .select();
 
     if (error) throw new BadRequestException(error);
+
+    // Make sure to exclude hashed password out of response.
+    delete data[0].password;
 
     return data;
   }
