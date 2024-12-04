@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { FlightsModule } from './flights/flights.module';
 import { SupabaseModule } from './supabase/supabase.module';
 import { TicketsModule } from './tickets/tickets.module';
+import { PlanesModule } from './planes/planes.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { TicketsModule } from './tickets/tickets.module';
     FlightsModule,
     SupabaseModule,
     TicketsModule,
+    PlanesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
