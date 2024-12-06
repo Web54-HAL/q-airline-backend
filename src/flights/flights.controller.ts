@@ -13,7 +13,7 @@ import { FlightsService } from './flights.service';
 import { CreateFlightDto } from './dto/create-flight.dto';
 import { UpdateFlightDto } from './dto/update-flight.dto';
 import { PublicEndpoint } from 'src/decorators/PublicEndpoint';
-import { FindFlightDto } from './dto/find_flight.dto';
+import { SearchFlightsDto } from './dto/search-flights.dto';
 import { RoleGuard } from 'src/guards/user-role.guard';
 import { EndpointUserRole } from 'src/decorators/EndpointUserRole';
 import { UserRole } from 'src/enums/UserRole';
@@ -36,9 +36,11 @@ export class FlightsController {
   }
 
   @PublicEndpoint()
-  @Get('search')
-  async findAll(@Body(ValidationPipe) findFlightDto: FindFlightDto) {
-    return await this.flightsService.findAll(findFlightDto);
+  @Post('search')
+  async searchFlights(
+    @Body(ValidationPipe) searchFlightsDto: SearchFlightsDto,
+  ) {
+    return await this.flightsService.searchFlights(searchFlightsDto);
   }
 
   @PublicEndpoint()

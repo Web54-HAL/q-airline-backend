@@ -6,7 +6,7 @@ import {
 import { CreateFlightDto } from './dto/create-flight.dto';
 import { UpdateFlightDto } from './dto/update-flight.dto';
 import { SupabaseService } from 'src/supabase/supabase.service';
-import { FindFlightDto } from './dto/find_flight.dto';
+import { SearchFlightsDto } from './dto/search-flights.dto';
 
 @Injectable()
 export class FlightsService {
@@ -32,7 +32,7 @@ export class FlightsService {
     return data;
   }
 
-  async findAll(findFlightDto: FindFlightDto) {
+  async searchFlights(searchFlightsDto: SearchFlightsDto) {
     const {
       flight_type,
       start_pos,
@@ -40,7 +40,7 @@ export class FlightsService {
       start_date,
       end_date,
       passenger_seat_count,
-    } = findFlightDto;
+    } = searchFlightsDto;
 
     const { data, error } = await this.supabaseService.supabaseClient
       .from('available_seats_view')

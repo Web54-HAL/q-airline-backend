@@ -7,7 +7,7 @@ import {
   IsString,
 } from 'class-validator';
 
-export class FindFlightDto {
+export class SearchFlightsDto {
   @IsEnum(['round_trip', 'one_way'], {
     message: 'Valid flight_type required',
   })
