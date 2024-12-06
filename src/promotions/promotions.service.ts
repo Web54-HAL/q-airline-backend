@@ -23,6 +23,22 @@ export class PromotionsService {
     return data;
   }
 
+  async getNewestAvailablePromotions(limitAmount: number) {
+    const now = new Date().toISOString();
+
+    const { data, error } = await this.supabaseService.supabaseClient
+      .from(this.promotionsTableName)
+      .select()
+      .lte('start_date', now)
+      .gte('end_date', now)
+      .order('start_date', { ascending: true })
+      .limit(limitAmount);
+
+    if (error) throw new BadRequestException(error);
+
+    return data;
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} promotion`;
   }

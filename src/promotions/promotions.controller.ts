@@ -8,6 +8,7 @@ import {
   Delete,
   ParseIntPipe,
   ValidationPipe,
+  Query,
 } from '@nestjs/common';
 import { PromotionsService } from './promotions.service';
 import { CreatePromotionDto } from './dto/create-promotion.dto';
@@ -27,6 +28,12 @@ export class PromotionsController {
   @Get()
   async findAll() {
     return await this.promotionsService.findAll();
+  }
+
+  @PublicEndpoint()
+  @Get('/newest')
+  async getNewestAvailablePromotions(@Query('limit') limit = 3) {
+    return await this.promotionsService.getNewestAvailablePromotions(limit);
   }
 
   @Get(':id')
