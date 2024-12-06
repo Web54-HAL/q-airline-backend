@@ -3,11 +3,14 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
+  Min,
 } from 'class-validator';
 
 export class CreateFlightDto {
   @IsNumber()
+  @Min(1)
   plane_id: number;
 
   @IsEnum(['round_trip', 'one_way'], {
@@ -21,6 +24,7 @@ export class CreateFlightDto {
   start_pos: string;
 
   @IsString()
+  @IsNotEmpty()
   end_pos: string;
 
   @IsDateString()
@@ -28,5 +32,6 @@ export class CreateFlightDto {
   start_date: string;
 
   @IsDateString()
+  @IsOptional()
   end_date: string;
 }

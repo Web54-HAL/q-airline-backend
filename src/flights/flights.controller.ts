@@ -22,7 +22,8 @@ import { UserRole } from 'src/enums/UserRole';
 export class FlightsController {
   constructor(private readonly flightsService: FlightsService) {}
 
-  @PublicEndpoint()
+  @EndpointUserRole(UserRole.Admin)
+  @UseGuards(RoleGuard)
   @Post()
   async create(@Body() createFlightDto: CreateFlightDto) {
     return await this.flightsService.create(createFlightDto);
@@ -43,13 +44,15 @@ export class FlightsController {
     return await this.flightsService.searchFlights(searchFlightsDto);
   }
 
-  @PublicEndpoint()
+  @EndpointUserRole(UserRole.Admin)
+  @UseGuards(RoleGuard)
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return await this.flightsService.findOne(+id);
   }
 
-  @PublicEndpoint()
+  @EndpointUserRole(UserRole.Admin)
+  @UseGuards(RoleGuard)
   @Patch(':id')
   async update(
     @Param('id') id: string,
@@ -58,7 +61,8 @@ export class FlightsController {
     return await this.flightsService.update(+id, updateFlightDto);
   }
 
-  @PublicEndpoint()
+  @EndpointUserRole(UserRole.Admin)
+  @UseGuards(RoleGuard)
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return await this.flightsService.remove(+id);
