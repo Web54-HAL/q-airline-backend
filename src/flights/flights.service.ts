@@ -27,7 +27,8 @@ export class FlightsService {
     const { data, error } = await this.supabaseService.supabaseClient
       .from(this.flightTableName)
       .insert(createFlightDto)
-      .select();
+      .select()
+      .single();
 
     if (error) throw new BadRequestException(error);
     return data;
@@ -93,7 +94,8 @@ export class FlightsService {
       .from(this.flightTableName)
       .update(updateFlightDto)
       .eq('flight_id', id)
-      .select();
+      .select()
+      .single();
 
     if (error) throw new BadRequestException(error);
     if (data.length === 0)
@@ -106,7 +108,8 @@ export class FlightsService {
     const response = await this.supabaseService.supabaseClient
       .from(this.flightTableName)
       .delete()
-      .eq('flight_id', id);
+      .eq('flight_id', id)
+      .single();
 
     return response;
   }

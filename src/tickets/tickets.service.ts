@@ -17,7 +17,9 @@ export class TicketsService {
     const { data } = await this.supabaseService.supabaseClient
       .from(this.ticketsTableName)
       .insert(createTicketDto)
-      .select();
+      .select()
+      .single();
+
     return data;
   }
 
@@ -42,7 +44,8 @@ export class TicketsService {
     const { data } = await this.supabaseService.supabaseClient
       .from(this.ticketsTableName)
       .select()
-      .eq('ticket_id', id);
+      .eq('ticket_id', id)
+      .single();
 
     return data;
   }
@@ -52,7 +55,8 @@ export class TicketsService {
       .from(this.ticketsTableName)
       .update(updateTicketDto)
       .eq('ticket_id', id)
-      .select();
+      .select()
+      .single();
 
     if (error) throw new BadRequestException(error);
     if (data.length === 0)
@@ -66,10 +70,12 @@ export class TicketsService {
       .from(this.ticketsTableName)
       .delete()
       .match({ customer_id: customerId, ticket_id: ticketId })
-      .select();
+      .select()
+      .single();
 
-    if (data.length === 0)
-      throw new BadRequestException('Can not cancel ticket');
+    if (error) throw new BadRequestException(error);
+    if (data === null)
+      throw new BadRequestException(`Can't cancel ticket with id: ${ticketId}`);
 
     return { data, error };
   }
@@ -79,7 +85,8 @@ export class TicketsService {
       .from(this.ticketsTableName)
       .delete()
       .eq('ticket_id', id)
-      .select();
+      .select()
+      .single();
 
     return { data, error };
   }
