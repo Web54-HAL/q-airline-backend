@@ -15,6 +15,15 @@ export class FlightsService {
   constructor(private readonly supabaseService: SupabaseService) {}
 
   async create(createFlightDto: CreateFlightDto) {
+    const inputDate = new Date(createFlightDto.start_date);
+    const currentDate = new Date();
+
+    if (inputDate < currentDate) {
+      throw new BadRequestException(
+        'start_date must not be earlier than current date.',
+      );
+    }
+
     const { data, error } = await this.supabaseService.supabaseClient
       .from(this.flightTableName)
       .insert(createFlightDto)
