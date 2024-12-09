@@ -59,7 +59,8 @@ export class FlightsService {
     const { data } = await this.supabaseService.supabaseClient
       .from(this.flightTableName)
       .select()
-      .eq('flight_id', id);
+      .eq('flight_id', id)
+      .single();
 
     if (data.length === 0)
       throw new NotFoundException(`Cannot find flight with id: ${id}`);
@@ -68,6 +69,17 @@ export class FlightsService {
   }
 
   async update(id: number, updateFlightDto: UpdateFlightDto) {
+    const flightEntity = await this.findOne(id);
+
+    const inputDate = new Date(updateFlightDto.start_date);
+    const originalDate = new Date(flightEntity.start_date);
+
+    if (inputDate < originalDate) {
+      throw new BadRequestException(
+        'New start_date must not be earlier than old start_date.',
+      );
+    }
+
     const { data, error } = await this.supabaseService.supabaseClient
       .from(this.flightTableName)
       .update(updateFlightDto)
