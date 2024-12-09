@@ -13,7 +13,7 @@ import { AuthGuard } from 'src/guards/auth.guard';
       useFactory: async () => ({
         global: true,
         secret: process.env.JWT_SECRET_KEY,
-        signOptions: { expiresIn: '120s' },
+        signOptions: { expiresIn: '30m' },
       }),
     }),
   ],
