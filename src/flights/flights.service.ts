@@ -15,12 +15,12 @@ export class FlightsService {
   constructor(private readonly supabaseService: SupabaseService) {}
 
   async create(createFlightDto: CreateFlightDto) {
-    const inputDate = new Date(createFlightDto.start_date);
+    const inputDate = new Date(createFlightDto.time_start);
     const currentDate = new Date();
 
     if (inputDate < currentDate) {
       throw new BadRequestException(
-        'start_date must not be earlier than current date.',
+        'time_start must not be earlier than current date.',
       );
     }
 
@@ -43,19 +43,13 @@ export class FlightsService {
   }
 
   async searchFlights(searchFlightsDto: SearchFlightsDto) {
-    const {
-      flight_type,
-      start_pos,
-      end_pos,
-      start_date,
-      end_date,
-      passenger_seat_count,
-    } = searchFlightsDto;
+    const { from_pos, to_pos, time_start, passenger_seat_count } =
+      searchFlightsDto;
 
     const { data, error } = await this.supabaseService.supabaseClient
       .from('available_seats_view')
       .select()
-      .match({ flight_type, start_pos, end_pos, start_date, end_date })
+      .match({ from_pos, to_pos, time_start })
       .gte('available_seats', passenger_seat_count);
 
     if (error) throw new BadRequestException(error);
@@ -72,21 +66,18 @@ export class FlightsService {
       .eq('flight_id', id)
       .single();
 
-    if (data.length === 0)
-      throw new NotFoundException(`Cannot find flight with id: ${id}`);
-
     return data;
   }
 
   async update(id: number, updateFlightDto: UpdateFlightDto) {
     const flightEntity = await this.findOne(id);
 
-    const inputDate = new Date(updateFlightDto.start_date);
-    const originalDate = new Date(flightEntity.start_date);
+    const inputDate = new Date(updateFlightDto.time_start);
+    const originalDate = new Date(flightEntity.time_start);
 
     if (inputDate < originalDate) {
       throw new BadRequestException(
-        'New start_date must not be earlier than old start_date.',
+        'New time_start must not be earlier than old time_start.',
       );
     }
 
@@ -98,8 +89,6 @@ export class FlightsService {
       .single();
 
     if (error) throw new BadRequestException(error);
-    if (data.length === 0)
-      throw new NotFoundException(`Can't find flight with id: ${id} to patch.`);
 
     return data;
   }
