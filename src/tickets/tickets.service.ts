@@ -23,10 +23,11 @@ export class TicketsService {
     return data;
   }
 
-  async getAll() {
+  async getAll(queryParameters: any) {
     const { data } = await this.supabaseService.supabaseClient
       .from(this.ticketsTableName)
-      .select();
+      .select()
+      .match(queryParameters);
 
     return data;
   }
