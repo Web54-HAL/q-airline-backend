@@ -72,6 +72,7 @@ export class FlightsService {
   async update(id: number, updateFlightDto: UpdateFlightDto) {
     const flightEntity = await this.findOne(id);
 
+    // Validate date
     const inputDate = new Date(updateFlightDto.time_start);
     const originalDate = new Date(flightEntity.time_start);
 
@@ -80,6 +81,9 @@ export class FlightsService {
         'New time_start must not be earlier than old time_start.',
       );
     }
+
+    // Validate from_pos != to_pos
+    this.validatePositions(updateFlightDto, flightEntity);
 
     const { data, error } = await this.supabaseService.supabaseClient
       .from(this.flightTableName)
@@ -101,5 +105,31 @@ export class FlightsService {
       .single();
 
     return response;
+  }
+
+  validatePositions(updateFlightDto: UpdateFlightDto, flightEntity: any) {
+    if (
+      updateFlightDto.from_pos &&
+      updateFlightDto.to_pos &&
+      updateFlightDto.from_pos == updateFlightDto.to_pos
+    ) {
+      throw new BadRequestException('New from_pos == New to_pos');
+    }
+
+    if (
+      updateFlightDto.from_pos &&
+      !updateFlightDto.to_pos &&
+      updateFlightDto.from_pos == flightEntity.to_pos
+    ) {
+      throw new BadRequestException('New from_pos == Original to_pos');
+    }
+
+    if (
+      updateFlightDto.to_pos &&
+      !updateFlightDto.from_pos &&
+      updateFlightDto.to_pos == flightEntity.from_pos
+    ) {
+      throw new BadRequestException('New to_pos == Original from_pos');
+    }
   }
 }
