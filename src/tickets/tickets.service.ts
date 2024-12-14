@@ -10,6 +10,7 @@ import { SupabaseService } from 'src/supabase/supabase.service';
 @Injectable()
 export class TicketsService {
   private readonly ticketsTableName = 'tickets';
+  private readonly bookedTicketsViewName = 'booked_tickets_view';
 
   constructor(private readonly supabaseService: SupabaseService) {}
 
@@ -34,7 +35,7 @@ export class TicketsService {
 
   async getAllBooked(customer_id: number) {
     const { data } = await this.supabaseService.supabaseClient
-      .from(this.ticketsTableName)
+      .from(this.bookedTicketsViewName)
       .select()
       .eq('customer_id', customer_id);
 
