@@ -11,6 +11,7 @@ import { SupabaseService } from 'src/supabase/supabase.service';
 export class TicketsService {
   private readonly ticketsTableName = 'tickets';
   private readonly bookedTicketsViewName = 'booked_tickets_view';
+  private readonly minTicketCancellationHour = 3;
 
   constructor(private readonly supabaseService: SupabaseService) {}
 
@@ -68,18 +69,16 @@ export class TicketsService {
   }
 
   async cancelTicket(customerId: number, ticketId: number) {
-    const { data, error } = await this.supabaseService.supabaseClient
+    await this.checkCancellableBookedTicketFromId(customerId, ticketId);
+
+    const { data } = await this.supabaseService.supabaseClient
       .from(this.ticketsTableName)
       .delete()
       .match({ customer_id: customerId, ticket_id: ticketId })
       .select()
       .single();
 
-    if (error) throw new BadRequestException(error);
-    if (data === null)
-      throw new BadRequestException(`Can't cancel ticket with id: ${ticketId}`);
-
-    return { data, error };
+    return data;
   }
 
   async remove(id: number) {
@@ -91,5 +90,32 @@ export class TicketsService {
       .single();
 
     return { data, error };
+  }
+
+  async checkCancellableBookedTicketFromId(
+    customerId: number,
+    ticketId: number,
+  ) {
+    const { data, error } = await this.supabaseService.supabaseClient
+      .from(this.bookedTicketsViewName)
+      .select()
+      .match({ customer_id: customerId, ticket_id: ticketId })
+      .single();
+
+    if (error) throw new BadRequestException(error);
+    if (!data)
+      throw new BadRequestException(`Can't cancel ticket with id: ${ticketId}`);
+
+    const currentTime = new Date();
+    const departureTime = new Date(data.time_start);
+
+    const timeDifferenceInHours =
+      (departureTime.getTime() - currentTime.getTime()) / (1000 * 60 * 60);
+
+    if (timeDifferenceInHours < this.minTicketCancellationHour) {
+      throw new BadRequestException(
+        `Ticket with id: ${ticketId} is only cancellable within 3 to 24 hours before flying.`,
+      );
+    }
   }
 }
