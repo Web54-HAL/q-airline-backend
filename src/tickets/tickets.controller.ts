@@ -10,6 +10,8 @@ import {
   UseGuards,
   ParseIntPipe,
   Query,
+  ValidationPipe,
+  UsePipes,
 } from '@nestjs/common';
 import { TicketsService } from './tickets.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
@@ -21,6 +23,7 @@ import {
   SignedInUserDto,
   signedInUserPayloadKey,
 } from 'src/auth/dto/signed-in-user.dto';
+import { GetAllTicketsQueryDto } from './dto/get-tickets-query.dto';
 
 @Controller('tickets')
 export class TicketsController {
@@ -42,28 +45,14 @@ export class TicketsController {
 
   @EndpointUserRole(UserRole.Admin)
   @UseGuards(RoleGuard)
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { enableImplicitConversion: true },
+    }),
+  )
   @Get()
-  async getAll(
-    @Query('customer_id') customer_id?: number,
-    @Query('flight_id') flight_id?: number,
-    @Query('booking_date') booking_date?: string,
-    @Query('adult_count') adult_count?: number,
-    @Query('children_count') children_count?: number,
-    @Query('infant_count') infant_count?: number,
-    @Query('total_passengers') total_passengers?: number,
-  ) {
-    const queryParameters: any = {};
-
-    if (customer_id !== undefined) queryParameters.customer_id = customer_id;
-    if (flight_id !== undefined) queryParameters.flight_id = flight_id;
-    if (booking_date !== undefined) queryParameters.booking_date = booking_date;
-    if (adult_count !== undefined) queryParameters.adult_count = adult_count;
-    if (children_count !== undefined)
-      queryParameters.children_count = children_count;
-    if (infant_count !== undefined) queryParameters.infant_count = infant_count;
-    if (total_passengers !== undefined)
-      queryParameters.total_passengers = total_passengers;
-
+  async getAll(@Query() queryParameters: GetAllTicketsQueryDto) {
     return await this.ticketsService.getAll(queryParameters);
   }
 
