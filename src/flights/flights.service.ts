@@ -7,6 +7,7 @@ import { CreateFlightDto } from './dto/create-flight.dto';
 import { UpdateFlightDto } from './dto/update-flight.dto';
 import { SupabaseService } from 'src/supabase/supabase.service';
 import { SearchFlightsDto } from './dto/search-flights.dto';
+import { GetAllFlightsQueryDto } from './dto/get-flights-query.dto';
 
 @Injectable()
 export class FlightsService {
@@ -34,10 +35,11 @@ export class FlightsService {
     return data;
   }
 
-  async getAll() {
+  async getAll(queryParameters: GetAllFlightsQueryDto) {
     const { data } = await this.supabaseService.supabaseClient
       .from(this.flightTableName)
-      .select();
+      .select()
+      .match(queryParameters);
 
     return data;
   }

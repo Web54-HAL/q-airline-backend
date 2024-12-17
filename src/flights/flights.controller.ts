@@ -8,6 +8,7 @@ import {
   Delete,
   ValidationPipe,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { FlightsService } from './flights.service';
 import { CreateFlightDto } from './dto/create-flight.dto';
@@ -17,6 +18,7 @@ import { SearchFlightsDto } from './dto/search-flights.dto';
 import { RoleGuard } from 'src/guards/user-role.guard';
 import { EndpointUserRole } from 'src/decorators/EndpointUserRole';
 import { UserRole } from 'src/enums/UserRole';
+import { GetAllFlightsQueryDto } from './dto/get-flights-query.dto';
 
 @Controller('flights')
 export class FlightsController {
@@ -32,8 +34,8 @@ export class FlightsController {
   @EndpointUserRole(UserRole.Admin)
   @UseGuards(RoleGuard)
   @Get()
-  async getAll() {
-    return await this.flightsService.getAll();
+  async getAll(@Query() queryParameters: GetAllFlightsQueryDto) {
+    return await this.flightsService.getAll(queryParameters);
   }
 
   @PublicEndpoint()
