@@ -6,6 +6,7 @@ import {
 import { CreatePlaneDto } from './dto/create-plane.dto';
 import { UpdatePlaneDto } from './dto/update-plane.dto';
 import { SupabaseService } from 'src/supabase/supabase.service';
+import { GetAllPlanesQueryDto } from './dto/get-planes-query.dto';
 
 @Injectable()
 export class PlanesService {
@@ -25,7 +26,7 @@ export class PlanesService {
     return data;
   }
 
-  async findAll(queryParameters: any) {
+  async findAll(queryParameters: GetAllPlanesQueryDto) {
     const { data, error } = await this.supabaseService.supabaseClient
       .from(this.planesTableName)
       .select()

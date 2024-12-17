@@ -6,6 +6,7 @@ import {
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { SupabaseService } from 'src/supabase/supabase.service';
+import { GetAllTicketsQueryDto } from './dto/get-tickets-query.dto';
 
 @Injectable()
 export class TicketsService {
@@ -25,7 +26,7 @@ export class TicketsService {
     return data;
   }
 
-  async getAll(queryParameters: any) {
+  async getAll(queryParameters: GetAllTicketsQueryDto) {
     const { data } = await this.supabaseService.supabaseClient
       .from(this.ticketsTableName)
       .select()
