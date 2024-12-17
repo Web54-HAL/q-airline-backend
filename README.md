@@ -5,6 +5,10 @@
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
+## Description
+
+This is a simple Airline back-end Project using [NestJs](https://nestjs.com/) and [Supabase](https://supabase.com/).
+
 ## Project setup
 
 ```bash
@@ -26,12 +30,14 @@ $ npm run start:prod
 ```
 
 ## Provided features
+
 - `Cloud PostgreSQL Database` with [Supabase](https://supabase.com/).
 - `MVC architecture` pattern by default of NestJs.
 - `Role-based API guard` with `JWT authentication`, 2 main roles are customer and admin.
 - `Rate limiting` feature with fixed limit of 70 request/s.
 
 ## Database structure
+
 
 ## License
 
