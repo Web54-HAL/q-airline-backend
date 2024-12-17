@@ -25,10 +25,11 @@ export class PlanesService {
     return data;
   }
 
-  async findAll() {
+  async findAll(queryParameters: any) {
     const { data, error } = await this.supabaseService.supabaseClient
       .from(this.planesTableName)
-      .select();
+      .select()
+      .match(queryParameters);
 
     if (error) throw new BadRequestException(error);
 
