@@ -11,10 +11,21 @@ This is a simple Airline back-end Project using [NestJs](https://nestjs.com/) an
 
 ## Project setup
 
+### Install Dependencies
+
 ```bash
 $ npm install
 ```
-Create your own `.env` file based on [.env.example](.env.example)
+
+### Environment Variables
+
+Create a `.env` file based on [.env.example](.env.example) and configure the following:
+
+- `SUPABASE_URL`: Your Supabase project's URL.
+- `SUPABASE_KEY`: Public API key for Supabase.
+- `SUPABASE_JWT_SECRET`: Supabase's secret key.
+- `JWT_SECRET_KEY`: JWT key for authentication.
+- `BCRYPT_SALT_ROUNDS`: Salt rounds for password encryption.
 
 ## Compile and run the project
 
@@ -29,12 +40,26 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Provided features
+## Provided Features
 
-- `Cloud PostgreSQL Database` with [Supabase](https://supabase.com/).
-- `MVC architecture` pattern by default of NestJs.
-- `Role-based API guard` with `JWT authentication`, 2 main roles are customer and admin.
-- `Rate limiting` feature with fixed limit of 70 request/s.
+- **Cloud PostgreSQL Database**  
+  Data is stored in a PostgreSQL database hosted on Supabase, enabling secure and scalable storage.
+
+- **MVC Architecture**  
+  The project follows the Model-View-Controller (MVC) design pattern provided by NestJS for clean and maintainable code.
+
+- **Role-based API Guard with JWT Authentication**  
+  Users are categorized into two roles:  
+  - `Customer`: Limited access to public endpoints.  
+  - `Admin`: Full access to manage resources.  
+  Authentication is secured using JSON Web Tokens (JWT).
+
+- **Rate Limiting**  
+  Protects the API from abuse by limiting requests to 70 requests per second.
+
+- **Password Encryption**  
+  Password hasing with [bcrypt](https://github.com/kelektiv/node.bcrypt.js).
+
 
 ## Database structure
 
