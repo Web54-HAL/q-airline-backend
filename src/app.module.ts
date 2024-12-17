@@ -9,6 +9,8 @@ import { SupabaseModule } from './supabase/supabase.module';
 import { TicketsModule } from './tickets/tickets.module';
 import { PlanesModule } from './planes/planes.module';
 import { PromotionsModule } from './promotions/promotions.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -20,8 +22,20 @@ import { PromotionsModule } from './promotions/promotions.module';
     TicketsModule,
     PlanesModule,
     PromotionsModule,
+    ThrottlerModule.forRoot([
+      {
+        ttl: 1000,
+        limit: 70,
+      },
+    ]),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}
