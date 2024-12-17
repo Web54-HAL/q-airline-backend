@@ -38,6 +38,7 @@ $ npm run start:prod
 
 ## Database structure
 
+![database-structure](database-structure.png)
 
 ## License
 
