@@ -4,6 +4,11 @@ export class GetAllTicketsQueryDto {
   @IsInt()
   @Min(0)
   @IsOptional()
+  ticket_id: number;
+
+  @IsInt()
+  @Min(0)
+  @IsOptional()
   customer_id: number;
 
   @IsInt()
