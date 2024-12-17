@@ -10,6 +10,7 @@ import { UserRole } from 'src/enums/UserRole';
 import { SignedInUserDto } from './dto/signed-in-user.dto';
 import { CustomerRegisterDto } from './dto/customer-register.dto';
 import * as bcrypt from 'bcrypt';
+import { normalizePhoneNumber } from 'src/utilities/phonenumber.normalizer';
 
 @Injectable()
 export class AuthService {
@@ -26,7 +27,9 @@ export class AuthService {
     const { username, password } = signInDto;
 
     const usernameIsEmail = this.isEmail(username);
-    const usernameIsPhoneNumber = this.isPhoneNumber(username);
+
+    const inputPhoneNumObj = { phoneNum: username };
+    const usernameIsPhoneNumber = this.isPhoneNumber(inputPhoneNumObj);
 
     if (!usernameIsEmail && !usernameIsPhoneNumber) {
       throw new UnauthorizedException('Invalid email or phone number');
@@ -34,7 +37,9 @@ export class AuthService {
 
     const user = usernameIsEmail
       ? await this.usersService.findUserByEmail(username)
-      : await this.usersService.findUserByPhoneNumber(username);
+      : await this.usersService.findUserByPhoneNumber(
+          inputPhoneNumObj.phoneNum,
+        );
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -83,10 +88,12 @@ export class AuthService {
     return emailRegex.test(inputEmail);
   }
 
-  private isPhoneNumber(inputPhoneNum: string): boolean {
-    // Following Regex for Vietnamese phone number.
-    const phoneNumRegex =
-      /(?:\+?84|0084|0)[235789][0-9]{1,2}[0-9]{7}(?:[^\d]+|$)/;
-    return phoneNumRegex.test(inputPhoneNum);
+  private isPhoneNumber(input: { phoneNum: string }): boolean {
+    const normalizedPhoneNum = normalizePhoneNumber(input.phoneNum);
+
+    if (!normalizedPhoneNum) return false;
+
+    input.phoneNum = normalizedPhoneNum;
+    return true;
   }
 }
