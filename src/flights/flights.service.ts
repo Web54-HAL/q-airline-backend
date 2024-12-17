@@ -45,13 +45,19 @@ export class FlightsService {
   }
 
   async searchFlights(searchFlightsDto: SearchFlightsDto) {
-    const { from_pos, to_pos, time_start, passenger_seat_count } =
+    const { from_pos, to_pos, date_start, passenger_seat_count } =
       searchFlightsDto;
+
+    const timeZone = searchFlightsDto.client_time_zone;
+    const dateTimeBegin = date_start + ' ' + '00:00:00' + timeZone;
+    const dateTimeEnd = date_start + ' ' + '24:00:00' + timeZone;
 
     const { data, error } = await this.supabaseService.supabaseClient
       .from('available_seats_view')
       .select()
-      .match({ from_pos, to_pos, time_start })
+      .match({ from_pos, to_pos })
+      .gte('time_start', dateTimeBegin)
+      .lte('time_start', dateTimeEnd)
       .gte('available_seats', passenger_seat_count);
 
     if (error) throw new BadRequestException(error);

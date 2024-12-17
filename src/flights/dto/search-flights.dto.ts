@@ -3,6 +3,7 @@ import {
   IsInt,
   IsNotEmpty,
   IsString,
+  IsTimeZone,
   Min,
 } from 'class-validator';
 
@@ -17,7 +18,11 @@ export class SearchFlightsDto {
 
   @IsDateString()
   @IsNotEmpty()
-  time_start: string;
+  date_start: string;
+
+  @IsTimeZone()
+  @IsNotEmpty()
+  client_time_zone: string;
 
   @IsInt()
   @Min(1)
