@@ -61,6 +61,10 @@ export class AuthService {
   }
 
   async customerSignUp(customerRegisterDto: CustomerRegisterDto) {
+    customerRegisterDto.phone_num = normalizePhoneNumber(
+      customerRegisterDto.phone_num,
+    );
+
     await this.usersService.checkingCustomerExistedInDatabase(
       customerRegisterDto.email,
       customerRegisterDto.phone_num,
