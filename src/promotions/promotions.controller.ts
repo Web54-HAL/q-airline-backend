@@ -20,8 +20,8 @@ export class PromotionsController {
   constructor(private readonly promotionsService: PromotionsService) {}
 
   @Post()
-  create(@Body(ValidationPipe) createPromotionDto: CreatePromotionDto) {
-    return this.promotionsService.create(createPromotionDto);
+  async create(@Body(ValidationPipe) createPromotionDto: CreatePromotionDto) {
+    return await this.promotionsService.create(createPromotionDto);
   }
 
   @PublicEndpoint()

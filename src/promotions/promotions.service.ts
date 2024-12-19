@@ -9,8 +9,16 @@ export class PromotionsService {
 
   constructor(private readonly supabaseService: SupabaseService) {}
 
-  create(createPromotionDto: CreatePromotionDto) {
-    return createPromotionDto;
+  async create(createPromotionDto: CreatePromotionDto) {
+    const { data, error } = await this.supabaseService.supabaseClient
+      .from(this.promotionsTableName)
+      .insert(createPromotionDto)
+      .select()
+      .single();
+
+    if (error) throw new BadRequestException(error);
+
+    return data;
   }
 
   async findAll() {
