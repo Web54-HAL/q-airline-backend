@@ -17,11 +17,13 @@ export class TicketsService {
   constructor(private readonly supabaseService: SupabaseService) {}
 
   async create(createTicketDto: CreateTicketDto) {
-    const { data } = await this.supabaseService.supabaseClient
+    const { data, error } = await this.supabaseService.supabaseClient
       .from(this.ticketsTableName)
       .insert(createTicketDto)
       .select()
       .single();
+
+    if (error) throw new BadRequestException(error);
 
     return data;
   }

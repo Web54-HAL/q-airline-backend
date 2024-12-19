@@ -24,6 +24,7 @@ import {
   signedInUserPayloadKey,
 } from 'src/auth/dto/signed-in-user.dto';
 import { GetAllTicketsQueryDto } from './dto/get-tickets-query.dto';
+import { BookTicketDto } from './dto/book-ticket.dto';
 
 @Controller('tickets')
 export class TicketsController {
@@ -39,7 +40,14 @@ export class TicketsController {
   @EndpointUserRole(UserRole.Customer)
   @UseGuards(RoleGuard)
   @Post('book')
-  async bookTicket(@Body() createTicketDto: CreateTicketDto) {
+  async bookTicket(@Request() request, @Body() bookTicketDto: BookTicketDto) {
+    const signedInUserDto: SignedInUserDto = request[signedInUserPayloadKey];
+
+    const createTicketDto: CreateTicketDto = {
+      ...bookTicketDto,
+      customer_id: signedInUserDto.userId,
+    };
+
     return await this.ticketsService.create(createTicketDto);
   }
 
