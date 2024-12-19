@@ -57,6 +57,9 @@ $ npm run start:prod
 - **Rate Limiting**  
   Protects the API from abuse by limiting requests to 70 requests per second.
 
+- **Caching for GET endpoints**  
+  Caching every GET endpoint with fixed cache lifetime of 300 seconds (Not recommended, some endpoints need shorter cache lifetime to show newest data from database).
+
 - **Password Encryption**  
   Password hasing with [bcrypt](https://github.com/kelektiv/node.bcrypt.js).
 
