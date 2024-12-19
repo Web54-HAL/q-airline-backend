@@ -22,7 +22,6 @@ $ npm install
 Create a `.env` file based on [.env.example](.env.example) and configure the following:
 
 - `SUPABASE_URL`: Your Supabase project's URL.
-- `SUPABASE_KEY`: Public API key for Supabase.
 - `SUPABASE_JWT_SECRET`: Supabase's secret key.
 - `JWT_SECRET_KEY`: JWT key for authentication.
 - `BCRYPT_SALT_ROUNDS`: Salt rounds for password encryption.
