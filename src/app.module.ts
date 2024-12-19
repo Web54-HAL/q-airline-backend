@@ -10,8 +10,9 @@ import { TicketsModule } from './tickets/tickets.module';
 import { PlanesModule } from './planes/planes.module';
 import { PromotionsModule } from './promotions/promotions.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { PositionMapModule } from './position_map/position_map.module';
+import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -30,6 +31,11 @@ import { PositionMapModule } from './position_map/position_map.module';
       },
     ]),
     PositionMapModule,
+    CacheModule.registerAsync({
+      useFactory: () => ({
+        ttl: 300, // Seconds
+      }),
+    }),
   ],
   controllers: [AppController],
   providers: [
@@ -37,6 +43,10 @@ import { PositionMapModule } from './position_map/position_map.module';
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
     },
   ],
 })
