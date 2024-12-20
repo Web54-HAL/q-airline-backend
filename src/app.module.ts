@@ -31,11 +31,11 @@ import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
       },
     ]),
     PositionMapModule,
-    // CacheModule.registerAsync({
-    //   useFactory: () => ({
-    //     ttl: 300, // Seconds
-    //   }),
-    // }),
+    CacheModule.registerAsync({
+      useFactory: () => ({
+        ttl: 300, // Seconds
+      }),
+    }),
   ],
   controllers: [AppController],
   providers: [
@@ -44,10 +44,10 @@ import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
-    // {
-    //   provide: APP_INTERCEPTOR,
-    //   useClass: CacheInterceptor,
-    // },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
+    },
   ],
 })
 export class AppModule {}
